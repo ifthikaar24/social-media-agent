@@ -5,6 +5,9 @@ export default function ConnectWallet() {
   const { connectors, connect, isPending } = useConnect()
   const { disconnect } = useDisconnect()
 
+  // Take only the first connector to avoid duplicates
+  const connector = connectors[0]
+
   if (isConnected) {
     return (
       <div className="flex flex-col items-center gap-3">
@@ -22,17 +25,12 @@ export default function ConnectWallet() {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3">
-      {connectors.map((connector) => (
-        <button
-          key={connector.uid}
-          onClick={() => connect({ connector })}
-          disabled={isPending}
-          className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl transition-all"
-        >
-          {isPending ? 'Connecting...' : `Connect ${connector.name}`}
-        </button>
-      ))}
-    </div>
+    <button
+      onClick={() => connect({ connector })}
+      disabled={isPending}
+      className="bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+    >
+      {isPending ? 'Connecting...' : 'Connect MetaMask Flask'}
+    </button>
   )
 }
