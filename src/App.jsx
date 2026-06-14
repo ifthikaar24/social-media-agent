@@ -110,18 +110,6 @@ export default function App() {
             🤖
           </Box>
           <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.03em' }}>SocialAgent</span>
-          <Box 
-            sx={{ 
-              fontSize: 11, 
-              color: '#6366F1', 
-              background: '#1a1040', 
-              border: '1px solid #3730a3', 
-              padding: '2px 8px', 
-              borderRadius: '20px' 
-            }}
-          >
-            Beta
-          </Box>
         </Box>
 
         {/* Nav Links - Separate Glass Buttons */}
