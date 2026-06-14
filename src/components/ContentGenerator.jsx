@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { generateBrandContent, generateTagline } from '../services/generateContent'
 
-export default function ContentGenerator({ onLog }) {
+export default function ContentGenerator({ onLog, onAgentStart, onAgentDone }) {
   const [businessDescription, setBusinessDescription] = useState('')
   const [loading, setLoading] = useState(false)
   const [posts, setPosts] = useState([])
@@ -14,6 +14,7 @@ export default function ContentGenerator({ onLog }) {
   try {
     setLoading(true)
     setError(null)
+    onAgentStart?.()
     setPosts([])
     setTagline('')
 
@@ -64,6 +65,7 @@ export default function ContentGenerator({ onLog }) {
     onLog(`Error: ${err.message}`, 'error')
   } finally {
     setLoading(false)
+    onAgentDone?.()
   }
 }
   return (

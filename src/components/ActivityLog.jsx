@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
 
 const typeStyles = {
-  success: 'text-emerald-400',
-  error: 'text-red-400',
-  agent: 'text-cyan-400',
-  info: 'text-gray-400',
+  success: { color: '#10B981' },
+  error: { color: '#F87171' },
+  agent: { color: '#22D3EE' },
+  info: { color: '#6b7280' },
 }
 
 const typeIcons = {
@@ -14,7 +14,7 @@ const typeIcons = {
   info: '·',
 }
 
-export default function ActivityLog({ logs }) {
+export default function ActivityLog({ logs, agentWorking }) {
   const bottomRef = useRef(null)
 
   useEffect(() => {
@@ -22,44 +22,54 @@ export default function ActivityLog({ logs }) {
   }, [logs])
 
   return (
-    <div className="rounded-2xl border border-gray-800 overflow-hidden sticky top-6" style={{ background: '#0D1117' }}>
+    <div style={{ background: '#05070F', border: '1px solid #1f2937', borderRadius: 16, overflow: 'hidden', position: 'sticky', top: 80 }}>
 
       {/* Terminal Header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-800" style={{ background: '#080B14' }}>
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-500/70"></div>
-          <div className="w-3 h-3 rounded-full bg-yellow-500/70"></div>
-          <div className="w-3 h-3 rounded-full bg-emerald-500/70"></div>
+      <div style={{ background: '#0D1117', borderBottom: '1px solid #1f2937', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F87171' }}></div>
+          <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#F59E0B' }}></div>
+          <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#10B981' }}></div>
         </div>
-        <span className="text-xs text-gray-500 font-mono mx-auto">agent.log</span>
+        <span style={{ fontSize: 11, color: '#4b5563', fontFamily: 'monospace', margin: '0 auto' }}>agent.log</span>
+        {agentWorking && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22D3EE', boxShadow: '0 0 8px #22D3EE', animation: 'pulse 1s infinite' }}></div>
+            <span style={{ fontSize: 10, color: '#22D3EE' }}>ACTIVE</span>
+          </div>
+        )}
       </div>
 
       {/* Log Content */}
-      <div className="p-4 font-mono text-xs h-96 lg:h-[600px] overflow-y-auto flex flex-col gap-2">
+      <div style={{ padding: 16, fontFamily: 'monospace', fontSize: 11, height: 480, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 6 }}>
         {logs.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-600">
-            <span className="text-2xl">⬡</span>
-            <span>Waiting for agent activity...</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 12, color: '#374151' }}>
+            <div style={{ fontSize: 32 }}>⬡</div>
+            <span style={{ fontSize: 12 }}>Waiting for agent activity...</span>
+            <span style={{ fontSize: 11, color: '#1f2937' }}>Complete the steps on the left to begin</span>
           </div>
         ) : (
           logs.map((log, i) => (
-            <div key={i} className="flex gap-2 items-start">
-              <span className="text-gray-600 shrink-0">{log.time}</span>
-              <span className={`shrink-0 ${typeStyles[log.type]}`}>
-                {typeIcons[log.type]}
-              </span>
-              <span className={typeStyles[log.type]}>{log.message}</span>
+            <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+              <span style={{ color: '#374151', flexShrink: 0 }}>{log.time}</span>
+              <span style={{ ...typeStyles[log.type], flexShrink: 0 }}>{typeIcons[log.type]}</span>
+              <span style={typeStyles[log.type]}>{log.message}</span>
             </div>
           ))
         )}
-        {/* Blinking cursor */}
         {logs.length > 0 && (
-          <div className="flex gap-2 items-center">
-            <span className="text-gray-600">{new Date().toLocaleTimeString('en-US', { hour12: false })}</span>
-            <span className="text-indigo-400 animate-pulse">▋</span>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <span style={{ color: '#374151' }}>{new Date().toLocaleTimeString('en-US', { hour12: false })}</span>
+            <span style={{ color: '#6366F1', animation: 'blink 1s infinite' }}>▋</span>
           </div>
         )}
         <div ref={bottomRef} />
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop: '1px solid #1f2937', padding: '10px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 10, color: '#374151', fontFamily: 'monospace' }}>{logs.length} events</span>
+        <span style={{ fontSize: 10, color: '#374151', fontFamily: 'monospace' }}>1Shot Relayer · Base</span>
       </div>
     </div>
   )
