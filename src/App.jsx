@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Box, Link } from '@mui/material'
 import ConnectWallet from './components/ConnectWallet'
 import SmartAccount from './components/SmartAccount'
 import GrantPermissions from './components/GrantPermissions'
@@ -12,6 +13,8 @@ export default function App() {
   const [relayerReady, setRelayerReady] = useState(false)
   const [logs, setLogs] = useState([])
   const [agentWorking, setAgentWorking] = useState(false)
+  const [showNav, setShowNav] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
 
   useEffect(() => {
     // Remove hash from URL
@@ -22,6 +25,30 @@ export default function App() {
     setTimeout(() => window.scrollTo(0, 0), 100)
   }, [])
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY
+      
+      // Show navbar when at the top
+      if (currentScrollY < 50) {
+        setShowNav(true)
+      }
+      // Hide navbar when scrolling down
+      else if (currentScrollY > lastScrollY) {
+        setShowNav(false)
+      }
+      // Show navbar when scrolling up
+      else if (currentScrollY < lastScrollY) {
+        setShowNav(true)
+      }
+      
+      setLastScrollY(currentScrollY)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [lastScrollY])
+
   function addLog(message, type = 'info') {
     const time = new Date().toLocaleTimeString('en-US', { hour12: false })
     setLogs(prev => [...prev, { message, type, time }])
@@ -30,51 +57,143 @@ export default function App() {
   return (
     <div style={{ background: '#05070F', minHeight: '100vh', color: 'white', fontFamily: 'system-ui, sans-serif' }}>
 
-      {/* Nav */}
-      <nav style={{
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
-        padding: '16px 32px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'sticky',
-        top: 0,
-        backdropFilter: 'blur(12px)',
-        background: 'rgba(5,7,15,0.75)',
-        zIndex: 50
-      }}>
-        {/* Logo */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: 'linear-gradient(135deg, #6366F1, #22D3EE)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🤖</div>
+      {/* Nav - Glass Buttons Style */}
+      <Box 
+        sx={{ 
+          position: 'sticky', 
+          top: 16,
+          zIndex: 50,
+          padding: '16px 32px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: 3,
+          flexWrap: 'wrap',
+          transform: showNav ? 'translateY(0)' : 'translateY(-120px)',
+          opacity: showNav ? 1 : 0,
+          transition: 'all 0.3s ease-in-out',
+          pointerEvents: showNav ? 'auto' : 'none'
+        }}
+      >
+        {/* Logo Glass Button */}
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1.25,
+            background: 'rgba(5,7,15,0.4)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(99,102,241,0.3)',
+            borderRadius: '12px',
+            padding: '8px 16px',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              background: 'rgba(5,7,15,0.5)',
+              border: '1px solid rgba(99,102,241,0.6)',
+              boxShadow: '0 8px 32px rgba(99,102,241,0.15)',
+            }
+          }}
+        >
+          <Box 
+            sx={{ 
+              width: 32, 
+              height: 32, 
+              borderRadius: 1, 
+              background: 'linear-gradient(135deg, #6366F1, #22D3EE)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: 16 
+            }}
+          >
+            🤖
+          </Box>
           <span style={{ fontWeight: 800, fontSize: 18, letterSpacing: '-0.03em' }}>SocialAgent</span>
-          <span style={{ fontSize: 11, color: '#6366F1', background: '#1a1040', border: '1px solid #3730a3', padding: '2px 8px', borderRadius: 20 }}>Beta</span>
-        </div>
+          <Box 
+            sx={{ 
+              fontSize: 11, 
+              color: '#6366F1', 
+              background: '#1a1040', 
+              border: '1px solid #3730a3', 
+              padding: '2px 8px', 
+              borderRadius: '20px' 
+            }}
+          >
+            Beta
+          </Box>
+        </Box>
 
-        {/* Nav Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+        {/* Nav Links - Separate Glass Buttons */}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           {[
             { label: 'How It Works', href: '#how-it-works' },
             { label: 'Live Demo', href: '#live-demo' },
             { label: 'Tech Stack', href: '#tech-stack' },
           ].map(link => (
-            <a
+            <Link
               key={link.label}
               href={link.href}
-              style={{ fontSize: 13, color: '#9ca3af', textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }}
-              onMouseEnter={e => e.target.style.color = 'white'}
-              onMouseLeave={e => e.target.style.color = '#9ca3af'}
+              sx={{
+                fontSize: 13,
+                color: '#9ca3af',
+                textDecoration: 'none',
+                fontWeight: 500,
+                background: 'rgba(5,7,15,0.3)',
+                backdropFilter: 'blur(20px)',
+                WebkitBackdropFilter: 'blur(20px)',
+                border: '1px solid rgba(99,102,241,0.2)',
+                borderRadius: '8px',
+                padding: '8px 16px',
+                transition: 'all 0.3s ease',
+                cursor: 'pointer',
+                display: 'block',
+                '&:hover': {
+                  color: 'white',
+                  background: 'rgba(5,7,15,0.5)',
+                  border: '1px solid rgba(99,102,241,0.5)',
+                  boxShadow: '0 8px 32px rgba(99,102,241,0.15)',
+                }
+              }}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
-        </div>
+        </Box>
 
-        {/* Status */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#10B981', boxShadow: '0 0 8px #10B981', animation: 'pulse 2s infinite' }}></div>
+        {/* Status - Glass Button */}
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1.5,
+            background: 'rgba(5,7,15,0.3)',
+            backdropFilter: 'blur(20px)',
+            WebkitBackdropFilter: 'blur(20px)',
+            border: '1px solid rgba(16,185,129,0.2)',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              background: 'rgba(5,7,15,0.5)',
+              border: '1px solid rgba(16,185,129,0.5)',
+              boxShadow: '0 8px 32px rgba(16,185,129,0.15)',
+            }
+          }}
+        >
+          <Box 
+            sx={{ 
+              width: 7, 
+              height: 7, 
+              borderRadius: '50%', 
+              background: '#10B981', 
+              boxShadow: '0 0 8px #10B981', 
+              animation: 'pulse 2s infinite' 
+            }}
+          />
           <span style={{ fontSize: 12, color: '#6b7280' }}>Sepolia Testnet</span>
-        </div>
-      </nav>
+        </Box>
+      </Box>
 
       {/* Hero */}
       <section style={{ textAlign: 'center', padding: '100px 24px 70px', position: 'relative', overflow: 'hidden' }}>
