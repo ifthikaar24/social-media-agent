@@ -2,8 +2,20 @@ const API_KEY = import.meta.env.VITE_AI_API_KEY
 const BASE_URL = import.meta.env.VITE_AI_BASE_URL
 const MODEL = import.meta.env.VITE_AI_MODEL
 
-export async function generateBrandContent(businessDescription) {
-  // Step 1 — Generate captions and hashtags
+// Simulate x402 payment per API call
+export async function simulateX402Payment(amount, purpose, onLog) {
+  onLog(`→ x402: HTTP 402 Payment Required`, 'agent')
+  await new Promise(r => setTimeout(r, 600))
+  onLog(`→ x402: Paying ${amount} USDC for "${purpose}"`, 'agent')
+  await new Promise(r => setTimeout(r, 800))
+  onLog(`→ x402: Payment confirmed via 1Shot relay ✓`, 'success')
+  await new Promise(r => setTimeout(r, 400))
+}
+
+export async function generateBrandContent(businessDescription, onLog) {
+  // x402 payment before API call
+  await simulateX402Payment('0.002', 'social post generation', onLog)
+
   const textResponse = await fetch(`${BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {
@@ -29,7 +41,7 @@ export async function generateBrandContent(businessDescription) {
   })
 
   const textData = await textResponse.json()
-  
+
   if (!textData.choices?.[0]?.message?.content) {
     throw new Error('Failed to generate captions')
   }
@@ -46,7 +58,10 @@ export async function generateBrandContent(businessDescription) {
   return posts
 }
 
-export async function generateTagline(businessDescription) {
+export async function generateTagline(businessDescription, onLog) {
+  // x402 payment before API call
+  await simulateX402Payment('0.001', 'tagline generation', onLog)
+
   const response = await fetch(`${BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: {

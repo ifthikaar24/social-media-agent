@@ -21,13 +21,13 @@ export default function ContentGenerator({ onLog }) {
       await delay(500)
 
       onLog('Calling Venice AI text endpoint via x402...', 'agent')
-      const generatedTagline = await generateTagline(businessDescription)
+      const generatedTagline = await generateTagline(businessDescription, onLog)
       setTagline(generatedTagline)
       onLog(`Tagline generated: "${generatedTagline}"`, 'success')
       await delay(500)
 
       onLog('Generating 3 social media posts...', 'agent')
-      const generatedPosts = await generateBrandContent(businessDescription)
+      const generatedPosts = await generateBrandContent(businessDescription, onLog)
       setPosts(generatedPosts)
       onLog(`${generatedPosts.length} posts generated successfully`, 'success')
       await delay(500)
