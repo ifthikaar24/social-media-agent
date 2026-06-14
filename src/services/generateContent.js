@@ -12,7 +12,7 @@ export async function simulateX402Payment(amount, purpose, onLog) {
   await new Promise(r => setTimeout(r, 400))
 }
 
-export async function generateBrandContent(businessDescription, onLog) {
+export async function generateBrandContent(businessDescription, trends, onLog) {
   // x402 payment before API call
   await simulateX402Payment('0.002', 'social post generation', onLog)
 
@@ -27,14 +27,15 @@ export async function generateBrandContent(businessDescription, onLog) {
       messages: [
         {
           role: 'system',
-          content: `You are a professional social media manager. 
-          Generate 3 social media posts for the business described. 
+          content: `You are a professional social media manager.
+          Generate 3 social media posts for the business described.
+          Use the provided trending topics to make posts relevant and timely.
           Respond ONLY with a JSON array, no markdown, no explanation.
           Format: [{"caption": "...", "hashtags": "...", "platform": "Instagram"}, ...]`,
         },
         {
           role: 'user',
-          content: `Business: ${businessDescription}`,
+          content: `Business: ${businessDescription}\n\nTrending topics right now: ${trends}`,
         },
       ],
     }),

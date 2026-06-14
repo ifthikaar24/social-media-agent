@@ -14,7 +14,6 @@ export default function OneShotRelay({ onLog, onReady }) {
       onLog('Connecting to 1Shot Permissionless Relayer (Base)...', 'agent')
 
       const caps = await getRelayerCapabilities()
-      console.log('1Shot capabilities:', JSON.stringify(caps, null, 2))
 
       if (!caps || Object.keys(caps).length === 0) {
         throw new Error('No capabilities returned from relayer')
@@ -35,7 +34,6 @@ export default function OneShotRelay({ onLog, onReady }) {
         onLog('Fetching fee quote from 1Shot relayer...', 'agent')
 
         const fee = await getRelayerFeeData(usdcToken.address)
-        console.log('1Shot fee data:', JSON.stringify(fee, null, 2))
 
         onLog(`Fee quote: minFee = ${fee?.minFee || 'N/A'} (USDC)`, 'success')
         onLog(`Relayer delegate: ${targetAddress?.slice(0, 10) || 'N/A'}...`, 'info')

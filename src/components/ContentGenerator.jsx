@@ -9,53 +9,63 @@ export default function ContentGenerator({ onLog }) {
   const [error, setError] = useState(null)
 
   async function handleGenerate() {
-    if (!businessDescription.trim()) return
+  if (!businessDescription.trim()) return
 
-    try {
-      setLoading(true)
-      setError(null)
-      setPosts([])
-      setTagline('')
+  try {
+    setLoading(true)
+    setError(null)
+    setPosts([])
+    setTagline('')
 
-      onLog('Agent A activated — starting content generation', 'agent')
-      await delay(500)
+    onLog('Agent A activated — starting content generation', 'agent')
+    await delay(500)
 
-      onLog('Calling Venice AI text endpoint via x402...', 'agent')
-      const generatedTagline = await generateTagline(businessDescription, onLog)
-      setTagline(generatedTagline)
-      onLog(`Tagline generated: "${generatedTagline}"`, 'success')
-      await delay(500)
+    // Step 1 — Fetch real trends via Tavily
+    onLog('Agent A: Fetching real trending topics via Tavily...', 'agent')
+    const { getTrendingTopics } = await import('../services/getTrends.js')
+    const trends = await getTrendingTopics(businessDescription)
+    onLog(`Real trends fetched: "${trends.slice(0, 60)}..."`, 'success')
+    await delay(500)
 
-      onLog('Generating 3 social media posts...', 'agent')
-      const generatedPosts = await generateBrandContent(businessDescription, onLog)
-      setPosts(generatedPosts)
-      onLog(`${generatedPosts.length} posts generated successfully`, 'success')
-      await delay(500)
+    // Step 2 — Generate tagline
+    onLog('Calling Venice AI text endpoint via x402...', 'agent')
+    const generatedTagline = await generateTagline(businessDescription, onLog)
+    setTagline(generatedTagline)
+    onLog(`Tagline generated: "${generatedTagline}"`, 'success')
+    await delay(500)
 
-      onLog('Agent A → redelegating to Agent B (Publisher)', 'agent')
-      await delay(800)
+    // Step 3 — Generate posts using real trends
+    onLog('Generating 3 trend-aware social media posts...', 'agent')
+    const generatedPosts = await generateBrandContent(businessDescription, trends, onLog)
+    setPosts(generatedPosts)
+    onLog(`${generatedPosts.length} trend-aware posts generated`, 'success')
+    await delay(500)
 
-      onLog('Agent B activated — scheduling posts', 'agent')
+    // Step 4 — Agent A redelegates to Agent B
+    onLog('Agent A → redelegating to Agent B (Publisher)', 'agent')
+    await delay(800)
+
+    // Step 5 — Agent B publishes
+    onLog('Agent B activated — scheduling posts', 'agent')
+    await delay(600)
+
+    for (const post of generatedPosts) {
+      onLog(`Publishing to ${post.platform}...`, 'agent')
       await delay(600)
-
-      for (const post of generatedPosts) {
-        onLog(`Publishing to ${post.platform}...`, 'agent')
-        await delay(600)
-        onLog(`✓ ${post.platform} post published via 1Shot relay`, 'success')
-      }
-
-      onLog('All posts published — agent going to sleep', 'success')
-      onLog('Next run scheduled in 7 days', 'info')
-
-    } catch (err) {
-      console.error(err)
-      setError(err.message)
-      onLog(`Error: ${err.message}`, 'error')
-    } finally {
-      setLoading(false)
+      onLog(`✓ ${post.platform} post published via 1Shot relay`, 'success')
     }
-  }
 
+    onLog('All posts published — agent going to sleep', 'success')
+    onLog('Next run scheduled in 7 days', 'info')
+
+  } catch (err) {
+    console.error(err)
+    setError(err.message)
+    onLog(`Error: ${err.message}`, 'error')
+  } finally {
+    setLoading(false)
+  }
+}
   return (
     <div className="flex flex-col gap-4">
       <textarea
