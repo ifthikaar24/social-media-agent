@@ -4,10 +4,12 @@ import SmartAccount from './components/SmartAccount'
 import GrantPermissions from './components/GrantPermissions'
 import ContentGenerator from './components/ContentGenerator'
 import ActivityLog from './components/ActivityLog'
+import OneShotRelay from './components/OneShotRelay'
 
 export default function App() {
   const [smartAccount, setSmartAccount] = useState(null)
   const [permissions, setPermissions] = useState(null)
+  const [relayerReady, setRelayerReady] = useState(false)
   const [logs, setLogs] = useState([])
 
   function addLog(message, type = 'info') {
@@ -53,38 +55,43 @@ export default function App() {
         {/* Left — Steps */}
         <div className="flex-1 flex flex-col gap-4">
 
-          {/* Step 1 */}
-          <StepCard number="01" title="Connect Wallet" active={true}>
+          <StepCard number="01" title="Connect Wallet">
             <ConnectWallet onConnected={() => addLog('Wallet connected successfully', 'success')} />
           </StepCard>
 
-          {/* Step 2 */}
-          <StepCard number="02" title="Upgrade to Smart Account" active={true}>
+          <StepCard number="02" title="Upgrade to Smart Account (EIP-7702)">
             <SmartAccount onSmartAccount={(sa) => {
               setSmartAccount(sa)
               addLog('Smart Account created via EIP-7702', 'success')
-              addLog(`Account address: ${sa.address.slice(0, 10)}...`, 'info')
+              addLog(`Account: ${sa.address.slice(0, 10)}...`, 'info')
             }} />
           </StepCard>
 
-          {/* Step 3 */}
           {smartAccount && (
-            <StepCard number="03" title="Grant Agent Permissions (ERC-7715)" active={true}>
+            <StepCard number="03" title="Grant Agent Permissions (ERC-7715)">
               <p className="text-gray-400 text-xs mb-3">
-                Allow the agent to spend up to 2 USDC/week on your behalf — no manual approval needed per action.
+                Allow the agent to spend up to 2 USDC/week on your behalf.
               </p>
               <GrantPermissions onPermissionsGranted={(p) => {
                 setPermissions(p)
                 addLog('ERC-7715 permissions granted by user', 'success')
                 addLog('Agent A delegating to Agent B via ERC-7710...', 'agent')
-                setTimeout(() => addLog('Redelegation complete — Agent B is active', 'success'), 1000)
+                setTimeout(() => addLog('Redelegation complete — Agent B active', 'success'), 1000)
               }} />
             </StepCard>
           )}
 
-          {/* Step 4 */}
           {permissions && (
-            <StepCard number="04" title="Generate Your Brand Content" active={true}>
+            <StepCard number="04" title="Connect 1Shot Permissionless Relayer">
+              <OneShotRelay
+                onLog={addLog}
+                onReady={() => setRelayerReady(true)}
+              />
+            </StepCard>
+          )}
+
+          {relayerReady && (
+            <StepCard number="05" title="Generate Your Brand Content">
               <ContentGenerator onLog={addLog} />
             </StepCard>
           )}
