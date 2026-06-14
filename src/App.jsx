@@ -36,7 +36,7 @@ export default function App() {
       {/* Hero */}
       <div className="text-center pt-12 pb-8 px-4">
         <div className="inline-block text-xs text-cyan-400 bg-cyan-950/50 border border-cyan-800/50 px-3 py-1 rounded-full mb-4">
-          Powered by MetaMask Smart Accounts × Venice AI × 1Shot
+          Powered by MetaMask × Groq × Tavily × 1Shot
         </div>
         <h1 className="text-5xl font-black tracking-tighter mb-3" style={{ letterSpacing: '-0.03em' }}>
           Your Brand.{' '}

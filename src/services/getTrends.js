@@ -16,6 +16,7 @@ export async function getTrendingTopics(businessDescription) {
   })
 
   const data = await response.json()
+  console.log('🔍 Tavily Real Trends Response:', JSON.stringify(data, null, 2))
 
   // Combine answer + top 3 result snippets for richer context
   const answer = data.answer || ''

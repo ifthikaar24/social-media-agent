@@ -28,7 +28,7 @@ export default function ContentGenerator({ onLog }) {
     await delay(500)
 
     // Step 2 — Generate tagline
-    onLog('Calling Venice AI text endpoint via x402...', 'agent')
+    onLog('Calling AI text endpoint via x402...', 'agent')
     const generatedTagline = await generateTagline(businessDescription, onLog)
     setTagline(generatedTagline)
     onLog(`Tagline generated: "${generatedTagline}"`, 'success')
