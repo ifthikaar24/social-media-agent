@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Box, Link } from '@mui/material'
 import ConnectWallet from './components/ConnectWallet'
 import SmartAccount from './components/SmartAccount'
@@ -6,6 +6,37 @@ import GrantPermissions from './components/GrantPermissions'
 import ContentGenerator from './components/ContentGenerator'
 import ActivityLog from './components/ActivityLog'
 import OneShotRelay from './components/OneShotRelay'
+
+// Custom hook for scroll animations
+function useScrollAnimation(options = {}) {
+  const ref = useRef(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true)
+      } else {
+        setIsVisible(false)
+      }
+    }, {
+      threshold: 0.1,
+      ...options,
+    })
+
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
+
+    return () => {
+      if (ref.current) {
+        observer.unobserve(ref.current)
+      }
+    }
+  }, [options])
+
+  return { ref, isVisible }
+}
 
 export default function App() {
   const [smartAccount, setSmartAccount] = useState(null)
@@ -186,9 +217,14 @@ export default function App() {
       {/* Hero */}
       <section style={{ textAlign: 'center', padding: '100px 24px 70px', position: 'relative', overflow: 'hidden' }}>
 
-        {/* Background glows */}
-        <div style={{ position: 'absolute', top: '10%', left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, background: 'radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
-        <div style={{ position: 'absolute', top: '30%', left: '30%', width: 300, height: 300, background: 'radial-gradient(ellipse, rgba(34,211,238,0.06) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
+        {/* Animated Background Orbs */}
+        <div style={{ position: 'absolute', top: '10%', left: '50%', width: 600, height: 300, background: 'radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%)', pointerEvents: 'none', animation: 'float 8s ease-in-out infinite', willChange: 'transform' }}></div>
+        <div style={{ position: 'absolute', top: '30%', left: '30%', width: 300, height: 300, background: 'radial-gradient(ellipse, rgba(34,211,238,0.08) 0%, transparent 70%)', pointerEvents: 'none', animation: 'float 10s ease-in-out infinite 1s', willChange: 'transform' }}></div>
+        
+        {/* Additional animated background elements */}
+        <div style={{ position: 'absolute', top: '5%', left: '65%', width: 250, height: 250, background: 'radial-gradient(ellipse, rgba(168,85,247,0.1) 0%, transparent 70%)', pointerEvents: 'none', animation: 'float 12s ease-in-out infinite 0.5s', borderRadius: '50%', willChange: 'transform' }}></div>
+        <div style={{ position: 'absolute', bottom: '10%', left: '15%', width: 200, height: 200, background: 'radial-gradient(ellipse, rgba(34,211,238,0.06) 0%, transparent 70%)', pointerEvents: 'none', animation: 'float 11s ease-in-out infinite 0.8s', borderRadius: '50%', willChange: 'transform' }}></div>
+        <div style={{ position: 'absolute', top: '50%', right: '5%', width: 150, height: 150, background: 'radial-gradient(ellipse, rgba(99,102,241,0.1) 0%, transparent 70%)', pointerEvents: 'none', animation: 'float 35s ease-in-out infinite 3s', borderRadius: '50%' }}></div>
 
         {/* Badge */}
         <div style={{
@@ -202,7 +238,9 @@ export default function App() {
           padding: '6px 16px',
           borderRadius: 20,
           marginBottom: 32,
-          animation: 'fadeInDown 0.6s ease both'
+          animation: 'fadeInDown 0.6s ease both',
+          position: 'relative',
+          zIndex: 10
         }}>
           <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22D3EE', animation: 'pulse 1.5s infinite' }}></div>
           MetaMask Smart Accounts × Groq × Tavily × 1Shot
@@ -215,7 +253,9 @@ export default function App() {
           letterSpacing: '-0.04em',
           lineHeight: 1.0,
           marginBottom: 24,
-          animation: 'fadeInUp 0.7s ease 0.1s both'
+          animation: 'fadeInUp 0.7s ease 0.1s both',
+          position: 'relative',
+          zIndex: 10
         }}>
           Your Brand.<br />
           <span style={{
@@ -235,7 +275,9 @@ export default function App() {
           maxWidth: 500,
           margin: '0 auto 40px',
           lineHeight: 1.7,
-          animation: 'fadeInUp 0.7s ease 0.2s both'
+          animation: 'fadeInUp 0.7s ease 0.2s both',
+          position: 'relative',
+          zIndex: 10
         }}>
           One prompt. An AI agent researches real trends, generates on-brand social content, and publishes it — autonomously, every week.
         </p>
@@ -246,7 +288,9 @@ export default function App() {
           gap: 12,
           justifyContent: 'center',
           marginBottom: 48,
-          animation: 'fadeInUp 0.7s ease 0.3s both'
+          animation: 'fadeInUp 0.7s ease 0.3s both',
+          position: 'relative',
+          zIndex: 10
         }}>
           <a href="#live-demo" style={{
             padding: '13px 28px',
@@ -281,7 +325,9 @@ export default function App() {
           gap: 10,
           justifyContent: 'center',
           flexWrap: 'wrap',
-          animation: 'fadeInUp 0.7s ease 0.4s both'
+          animation: 'fadeInUp 0.7s ease 0.4s both',
+          position: 'relative',
+          zIndex: 10
         }}>
           {['EIP-7702 Smart Accounts', 'ERC-7715 Permissions', 'ERC-7710 Delegation', 'x402 Payments', 'A2A Coordination'].map(tag => (
             <span key={tag} style={{ fontSize: 11, color: '#6b7280', background: '#0D1117', border: '1px solid #1f2937', padding: '4px 12px', borderRadius: 20 }}>{tag}</span>
@@ -296,12 +342,24 @@ export default function App() {
           { value: 'cents', label: 'Per post generated' },
           { value: '7 days', label: 'Between agent runs' },
           { value: '100%', label: 'Autonomous after setup' },
-        ].map(stat => (
-          <div key={stat.label} style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em', background: 'linear-gradient(135deg, #6366F1, #22D3EE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{stat.value}</div>
-            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{stat.label}</div>
-          </div>
-        ))}
+        ].map((stat, idx) => {
+          const { ref, isVisible } = useScrollAnimation()
+          return (
+            <div 
+              ref={ref}
+              key={stat.label} 
+              style={{ 
+                textAlign: 'center',
+                opacity: isVisible ? 1 : 0,
+                transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                transition: `opacity 0.6s ease ${idx * 0.1}s, transform 0.6s ease ${idx * 0.1}s`
+              }}
+            >
+              <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em', background: 'linear-gradient(135deg, #6366F1, #22D3EE)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{stat.value}</div>
+              <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>{stat.label}</div>
+            </div>
+          )
+        })}
       </section>
 
       {/* How It Works */}
@@ -320,15 +378,32 @@ export default function App() {
             { icon: '✍️', title: 'Generate Content', desc: 'Agent A calls the AI API via x402 micropayments — paying per request in USDC, relayed by 1Shot on Base.', tag: 'x402 + ERC-7710', color: '#F59E0B' },
             { icon: '🤝', title: 'Agent Handoff', desc: 'Agent A redelegates publishing rights to Agent B with scoped permissions — A2A coordination via ERC-7710.', tag: 'A2A + ERC-7710', color: '#10B981' },
             { icon: '📱', title: 'Publish & Sleep', desc: 'Agent B publishes to all platforms via 1Shot Permissionless Relayer on Base. Then sleeps for 7 days.', tag: '1Shot Relayer', color: '#06B6D4' },
-          ].map(step => (
-            <div key={step.title} style={{ background: '#0D1117', border: '1px solid #1f2937', borderRadius: 16, padding: 24, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${step.color}, transparent)` }}></div>
-              <div style={{ fontSize: 28, marginBottom: 12 }}>{step.icon}</div>
-              <div style={{ fontSize: 11, color: step.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{step.tag}</div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{step.title}</h3>
-              <p style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.6 }}>{step.desc}</p>
-            </div>
-          ))}
+          ].map((step, idx) => {
+            const { ref, isVisible } = useScrollAnimation()
+            return (
+              <div 
+                ref={ref}
+                key={step.title} 
+                style={{ 
+                  background: '#0D1117', 
+                  border: '1px solid #1f2937', 
+                  borderRadius: 16, 
+                  padding: 24, 
+                  position: 'relative', 
+                  overflow: 'hidden',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
+                  transition: `opacity 0.6s ease ${idx * 0.1}s, transform 0.6s ease ${idx * 0.1}s`
+                }}
+              >
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${step.color}, transparent)` }}></div>
+                <div style={{ fontSize: 28, marginBottom: 12 }}>{step.icon}</div>
+                <div style={{ fontSize: 11, color: step.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{step.tag}</div>
+                <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: '#9ca3af', lineHeight: 1.6 }}>{step.desc}</p>
+              </div>
+            )
+          })}
         </div>
       </section>
 
@@ -417,13 +492,30 @@ export default function App() {
             { name: 'x402 Protocol', role: 'Pay-per-use API payments', color: '#10B981' },
             { name: 'Groq AI', role: 'Fast AI content generation', color: '#8B5CF6' },
             { name: 'Tavily Search', role: 'Real-time trend research', color: '#06B6D4' },
-          ].map(tech => (
-            <div key={tech.name} style={{ background: '#0D1117', border: '1px solid #1f2937', borderRadius: 12, padding: 20, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${tech.color}, transparent)` }}></div>
-              <div style={{ fontSize: 13, fontWeight: 700, color: 'white', marginBottom: 4 }}>{tech.name}</div>
-              <div style={{ fontSize: 12, color: '#6b7280' }}>{tech.role}</div>
-            </div>
-          ))}
+          ].map((tech, idx) => {
+            const { ref, isVisible } = useScrollAnimation()
+            return (
+              <div 
+                ref={ref}
+                key={tech.name} 
+                style={{ 
+                  background: '#0D1117', 
+                  border: '1px solid #1f2937', 
+                  borderRadius: 12, 
+                  padding: 20, 
+                  position: 'relative', 
+                  overflow: 'hidden',
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
+                  transition: `opacity 0.6s ease ${idx * 0.08}s, transform 0.6s ease ${idx * 0.08}s`
+                }}
+              >
+                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, ${tech.color}, transparent)` }}></div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: 'white', marginBottom: 4 }}>{tech.name}</div>
+                <div style={{ fontSize: 12, color: '#6b7280' }}>{tech.role}</div>
+              </div>
+            )
+          })}
         </div>
       </section>
 
@@ -454,6 +546,27 @@ export default function App() {
           from { opacity: 0; transform: translateY(20px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes float {
+          0% { transform: translateY(0px) translateX(0px); }
+          25% { transform: translateY(-60px) translateX(60px); }
+          50% { transform: translateY(-100px) translateX(-60px); }
+          75% { transform: translateY(-40px) translateX(80px); }
+          100% { transform: translateY(0px) translateX(0px); }
+        }
+        @keyframes slideInUp {
+          from { opacity: 0; transform: translateY(40px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInLeft {
+          from { opacity: 0; transform: translateX(-40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes slideInRight {
+          from { opacity: 0; transform: translateX(40px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        .scroll-fade-in { opacity: 0; transform: translateY(40px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .scroll-fade-in.visible { opacity: 1; transform: translateY(0); }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #05070F; }
         ::-webkit-scrollbar { width: 6px; }
