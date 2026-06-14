@@ -22,9 +22,10 @@ export default function OneShotRelay({ onLog, onReady }) {
 
       onLog('1Shot relayer capabilities fetched ✓', 'success')
 
-      // Extract tokens and targetAddress from response
-      const tokens = caps.tokens || []
-      const targetAddress = caps.targetAddress || caps.delegate || ''
+      // Response is nested under chain ID "8453"
+      const chainData = caps['8453'] || caps
+      const tokens = chainData.tokens || []
+      const targetAddress = chainData.targetAddress || chainData.feeCollector || ''
       const usdcToken = tokens.find(t =>
         t.symbol?.toUpperCase() === 'USDC'
       ) || tokens[0]
