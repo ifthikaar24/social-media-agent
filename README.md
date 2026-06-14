@@ -29,7 +29,7 @@ SocialAgent is an autonomous AI agent that researches real trends, generates on-
 |---|---|
 | ✅ Best x402 + ERC-7710 | Every AI API call is an x402 micropayment via delegated smart account |
 | ✅ Best Agent | Fully autonomous — user sets up once, agent runs weekly forever |
-| ✅ Best A2A Coordination | Agent A (Brand) redelegates to Agent B (Publisher) via ERC-7710 |
+| ✅ Best A2A Coordination | Agent A researches trends via Tavily, generates content, then redelegates publishing to Agent B via ERC-7710 |
 | ✅ Best 1Shot Relayer | 1Shot relayer on Base — capabilities, fee quotes, USDC gas abstraction |
 
 ---
@@ -60,18 +60,30 @@ User sees live activity log — every action tracked
 
 ### Agent A — Brand Agent
 - Holds main ERC-7710 delegation from user's smart account
-- Fetches real trending topics via Tavily Search API
-- Calls AI API for tagline + 3 social post captions
-- Every API call is an x402 micropayment in USDC
-- Redelegates publishing rights to Agent B with scoped permissions
+- Fetches real trending topics via Tavily Search API — informs all content decisions before redelegation
+- Uses trend data to call AI API for tagline + 3 social post captions
+- Every AI API call is an x402 micropayment in USDC
+- Only after research and generation is complete — redelegates publishing rights to Agent B with scoped permissions
 
 ### Agent B — Publisher Agent
 - Receives redelegation from Agent A via ERC-7710
-- Can only publish — cannot generate or exceed Agent A's budget
+- Gets a fully prepared content package — Agent A already did the research
+- Can only publish — cannot generate content, fetch trends, or exceed Agent A's budget
 - Publishes posts across Instagram, Facebook, Twitter
 - Goes to sleep after publishing — wakes up in 7 days
 
-**Least-privilege A2A** — Agent B can only do exactly what Agent A explicitly allowed.
+### Why Two Agents?
+
+Agent A and Agent B have fundamentally different jobs:
+
+| | Agent A | Agent B |
+|---|---|---|
+| Job | Research + Create | Publish |
+| Needs | Tavily API + AI API access | Social platform access |
+| Budget | 2 USDC/week | 0.5 USDC scoped from Agent A |
+| Trust level | High — holds main delegation | Lower — scoped permissions only |
+
+This is **least-privilege A2A coordination** — Agent B can only do exactly what Agent A explicitly redelegated. No over-permissioning.
 
 ---
 
@@ -165,12 +177,13 @@ Open `http://localhost:5173`
 2. Create Smart Account (EIP-7702 upgrade)
 3. Grant agent permissions (ERC-7715 — 2 USDC/week)
 4. Connect 1Shot Relayer
-5. Describe your business → agent generates and publishes content
+5. Describe your business → agent researches trends → generates content → publishes
 
 ---
 
 ## 🔑 Key Innovations
 
+- **Intelligent A2A** — Agent A researches with Tavily before redelegating to Agent B — not blind task passing
 - **Pay-per-use AI** — x402 micropayments per API call, no subscriptions
 - **True autonomy** — agent runs weekly without any user involvement
 - **Least-privilege A2A** — Agent B only gets exactly what it needs
