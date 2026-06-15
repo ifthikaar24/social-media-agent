@@ -71,6 +71,7 @@ User sees live activity log — every action tracked
 - Can only publish — cannot generate content, fetch trends, or exceed Agent A's budget
 - Publishes posts across Instagram, Facebook, Twitter
 - Goes to sleep after publishing — wakes up in 7 days
+- Transaction relay is architected for 1Shot Permissionless Relayer on Base — current demo fetches real relayer capabilities and fee quotes via JSON-RPC
 
 ### Why Two Agents?
 
@@ -95,7 +96,7 @@ This is **least-privilege A2A coordination** — Agent B can only do exactly wha
 | Wallet | MetaMask Flask |
 | Smart Account | MetaMask Smart Accounts Kit v1.6.0 |
 | Permissions | ERC-7715 + ERC-7710 |
-| Transaction Relay | 1Shot Permissionless Relayer (Base) |
+| Transaction Relay | 1Shot Permissionless Relayer (Base) — integrated for capabilities + fee quotes via JSON-RPC |
 | Payments | x402 Protocol |
 | AI Generation | Groq (llama-3.3-70b-versatile) |
 | Trend Research | Tavily Search API |
