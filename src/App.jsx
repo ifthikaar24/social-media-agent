@@ -416,7 +416,7 @@ export default function App() {
             <p style={{ color: '#9ca3af', marginTop: 8 }}>Follow the steps below. Takes under 2 minutes.</p>
           </div>
 
-          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 24, alignItems: 'flex-start', flexWrap: 'wrap', minHeight: '100vh' }}>
 
             {/* Left — Steps */}
             <div style={{ flex: 1, minWidth: 300, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -469,7 +469,7 @@ export default function App() {
             </div>
 
             {/* Right — Activity Log */}
-            <div style={{ width: 360, flexShrink: 0 }}>
+            <div style={{ width: 360, flexShrink: 0, position: 'sticky', top: 80, alignSelf: 'flex-start' }}>
               <ActivityLog logs={logs} agentWorking={agentWorking} />
             </div>
 

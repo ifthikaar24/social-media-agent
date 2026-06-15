@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import React from 'react'
 
 const typeStyles = {
   success: { color: '#10B981' },
@@ -15,14 +15,9 @@ const typeIcons = {
 }
 
 export default function ActivityLog({ logs, agentWorking }) {
-  const bottomRef = useRef(null)
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [logs])
 
   return (
-    <div style={{ background: '#05070F', border: '1px solid #1f2937', borderRadius: 16, overflow: 'hidden', position: 'sticky', top: 80 }}>
+    <div style={{ background: '#05070F', border: '1px solid #1f2937', borderRadius: 16, overflow: 'hidden' }}>
 
       {/* Terminal Header */}
       <div style={{ background: '#0D1117', borderBottom: '1px solid #1f2937', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -63,7 +58,6 @@ export default function ActivityLog({ logs, agentWorking }) {
             <span style={{ color: '#6366F1', animation: 'blink 1s infinite' }}>▋</span>
           </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       {/* Footer */}
