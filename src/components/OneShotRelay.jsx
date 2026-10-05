@@ -21,7 +21,6 @@ export default function OneShotRelay({ onLog, onReady }) {
 
       onLog('1Shot relayer capabilities fetched ✓', 'success')
 
-      // Response is nested under chain ID "8453"
       const chainData = caps['8453'] || caps
       const tokens = chainData.tokens || []
       const targetAddress = chainData.targetAddress || chainData.feeCollector || ''
@@ -58,68 +57,59 @@ export default function OneShotRelay({ onLog, onReady }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-gray-400 text-xs">
-        Connect to 1Shot's permissionless relayer on Base — relay EIP-7710 transactions with gas paid in USDC. No signup, no API key needed.
+      <p className="hint">
+        Connect to 1Shot’s permissionless relayer on Base — relay EIP-7710 transactions with gas paid in USDC. No signup, no API key.
       </p>
 
       <button
+        type="button"
         onClick={handleConnect}
         disabled={loading || !!relayerInfo}
-        className="w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
+        className="btn btn-block"
         style={{
-          background: relayerInfo
-            ? '#1a2a1a'
-            : 'linear-gradient(135deg, #0EA5E9, #6366F1)',
-          color: 'white',
-          border: relayerInfo ? '1px solid #22c55e' : 'none'
+          background: relayerInfo ? 'var(--accent-soft)' : 'var(--accent)',
+          color: relayerInfo ? 'var(--accent)' : '#f8f4eb',
+          border: relayerInfo ? '1px solid #c9ddd2' : 'none',
         }}
       >
-        {loading ? 'Connecting...' : relayerInfo ? '⚡ Relayer Connected' : '⚡ Connect 1Shot Relayer'}
+        {loading ? 'Connecting…' : relayerInfo ? 'Relayer connected' : 'Connect 1Shot relayer'}
       </button>
 
       {relayerInfo && (
-        <div className="rounded-xl p-4 border border-cyan-800/50" style={{ background: '#0D1117' }}>
-          <p className="text-xs text-cyan-400 mb-3 uppercase tracking-wider font-semibold">
-            1Shot Relayer Active ✅
-          </p>
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-between">
-              <span className="text-gray-500 text-xs">Network</span>
-              <span className="text-white text-xs font-mono">Base (8453)</span>
+        <div className="result">
+          <p className="result-label">1Shot relayer</p>
+          <div className="meta-list">
+            <div className="meta-row">
+              <span>Network</span>
+              <span className="mono" style={{ color: 'var(--ink)' }}>Base (8453)</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500 text-xs">Accepted tokens</span>
-              <span className="text-emerald-400 text-xs">
+            <div className="meta-row">
+              <span>Accepted tokens</span>
+              <span>
                 {relayerInfo.tokens.length > 0
                   ? relayerInfo.tokens.map(t => t.symbol).join(', ')
                   : 'USDC, USDT'}
               </span>
             </div>
             {relayerInfo.targetAddress && (
-              <div className="flex justify-between">
-                <span className="text-gray-500 text-xs">Delegate</span>
-                <span className="text-white text-xs font-mono">
-                  {relayerInfo.targetAddress.slice(0, 10)}...
+              <div className="meta-row">
+                <span>Delegate</span>
+                <span className="mono" style={{ color: 'var(--ink)' }}>
+                  {relayerInfo.targetAddress.slice(0, 10)}…
                 </span>
               </div>
             )}
             {relayerInfo.fee && (
-              <div className="flex justify-between">
-                <span className="text-gray-500 text-xs">Min fee</span>
-                <span className="text-cyan-400 text-xs">
-                  {relayerInfo.fee.minFee} USDC atoms
-                </span>
+              <div className="meta-row">
+                <span>Min fee</span>
+                <span>{relayerInfo.fee.minFee} USDC atoms</span>
               </div>
             )}
           </div>
         </div>
       )}
 
-      {error && (
-        <div className="rounded-xl p-3 border border-red-800 bg-red-950/30">
-          <p className="text-red-400 text-xs">{error}</p>
-        </div>
-      )}
+      {error && <div className="error-box">{error}</div>}
     </div>
   )
 }

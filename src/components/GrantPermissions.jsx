@@ -76,23 +76,20 @@ export default function GrantPermissions({ onPermissionsGranted }) {
   }
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-4">
+    <div className="flex flex-col gap-3">
       {!granted ? (
         <button
+          type="button"
           onClick={handleGrantPermissions}
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold px-6 py-3 rounded-xl transition-all"
+          className="btn btn-primary btn-block"
         >
-          {loading ? 'Requesting Permissions...' : 'Grant Agent Permissions'}
+          {loading ? 'Requesting permissions…' : 'Grant agent permissions'}
         </button>
       ) : (
-        <div className="bg-blue-900 border border-blue-500 rounded-lg px-4 py-2 text-blue-300 text-sm">
-          ✅ Permissions Granted — Agent is ready
-        </div>
+        <div className="ok-pill">Permissions granted — agent is ready</div>
       )}
-      {error && (
-        <p className="text-red-400 text-xs max-w-sm text-center">{error}</p>
-      )}
+      {error && <p className="error-box">{error}</p>}
     </div>
   )
 }

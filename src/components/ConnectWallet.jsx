@@ -17,17 +17,12 @@ export default function ConnectWallet({ onConnected }) {
 
   if (isConnected) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}></div>
-          <span style={{ color: '#10B981', fontSize: 13, fontFamily: 'monospace' }}>
-            {address.slice(0, 6)}...{address.slice(-4)}
-          </span>
+      <div className="status-row">
+        <div className="status-left">
+          <span className="dot" />
+          <span className="mono">{address.slice(0, 6)}…{address.slice(-4)}</span>
         </div>
-        <button
-          onClick={() => disconnect()}
-          style={{ fontSize: 12, color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer' }}
-        >
+        <button type="button" className="btn-ghost" onClick={() => disconnect()}>
           Disconnect
         </button>
       </div>
@@ -36,23 +31,12 @@ export default function ConnectWallet({ onConnected }) {
 
   return (
     <button
+      type="button"
       onClick={() => connect({ connector })}
       disabled={isPending}
-      style={{
-        width: '100%',
-        padding: '12px',
-        borderRadius: 12,
-        border: 'none',
-        cursor: isPending ? 'not-allowed' : 'pointer',
-        fontWeight: 700,
-        fontSize: 14,
-        opacity: isPending ? 0.5 : 1,
-        background: 'linear-gradient(135deg, #6366F1, #22D3EE)',
-        color: 'white',
-        transition: 'all 0.2s'
-      }}
+      className="btn btn-primary btn-block"
     >
-      {isPending ? 'Connecting...' : 'Connect MetaMask Flask'}
+      {isPending ? 'Connecting…' : 'Connect MetaMask Flask'}
     </button>
   )
 }

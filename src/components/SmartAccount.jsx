@@ -26,39 +26,26 @@ export default function SmartAccount({ onSmartAccount }) {
   if (!isConnected) return null
 
   return (
-    <div className="flex flex-col items-center gap-3 mt-4">
+    <div className="flex flex-col gap-3">
       {!smartAddress ? (
         <button
+          type="button"
           onClick={handleCreateSmartAccount}
           disabled={loading}
-          style={{
-            width: '100%',
-            padding: '12px',
-            borderRadius: 12,
-            border: 'none',
-            cursor: loading ? 'not-allowed' : 'pointer',
-            fontWeight: 700,
-            fontSize: 14,
-            opacity: loading ? 0.5 : 1,
-            background: 'linear-gradient(135deg, #8B5CF6, #6366F1)',
-            color: 'white',
-            transition: 'all 0.2s'
-          }}
+          className="btn btn-primary btn-block"
         >
-          {loading ? 'Creating Smart Account...' : 'Create Smart Account'}
-      </button>
+          {loading ? 'Creating smart account…' : 'Create smart account'}
+        </button>
       ) : (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#10B981' }}></div>
-          <span style={{ color: '#10B981', fontSize: 13, fontFamily: 'monospace' }}>
-            {smartAddress.slice(0, 6)}...{smartAddress.slice(-4)}
-          </span>
-          <span style={{ marginLeft: 'auto', fontSize: 11, color: '#4b5563' }}>Smart Account Active</span>
+        <div className="status-row">
+          <div className="status-left">
+            <span className="dot" />
+            <span className="mono">{smartAddress.slice(0, 6)}…{smartAddress.slice(-4)}</span>
+          </div>
+          <span className="step-sub">Active</span>
         </div>
       )}
-      {error && (
-        <p className="text-red-400 text-xs max-w-sm text-center">{error}</p>
-      )}
+      {error && <p className="error-box">{error}</p>}
     </div>
   )
 }

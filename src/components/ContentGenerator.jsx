@@ -73,49 +73,43 @@ export default function ContentGenerator({ onLog, onAgentStart, onAgentDone }) {
       <textarea
         value={businessDescription}
         onChange={e => setBusinessDescription(e.target.value)}
-        placeholder="e.g. A modern minimalist coffee shop called Brewnite in Chennai, warm and cozy vibe"
-        className="w-full rounded-xl p-4 text-sm resize-none h-24 border border-gray-700 focus:outline-none focus:border-indigo-500 transition-colors"
-        style={{ background: '#080B14', color: 'white' }}
+        placeholder="e.g. A modern coffee shop called Brewnite in Chennai — warm, local, and a little quiet."
+        className="field"
       />
       <button
+        type="button"
         onClick={handleGenerate}
         disabled={loading || !businessDescription.trim()}
-        className="w-full py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
-        style={{ background: loading ? '#1a1a2e' : 'linear-gradient(135deg, #22D3EE, #6366F1)', color: 'white' }}
+        className="btn btn-primary btn-block"
       >
-        {loading ? '🤖 Agent Working...' : '🚀 Activate Agent'}
+        {loading ? 'Agent working…' : 'Activate agent'}
       </button>
 
       {tagline && (
-        <div className="rounded-xl p-4 border border-indigo-800/50" style={{ background: '#0D1117' }}>
-          <p className="text-xs text-indigo-400 mb-1 uppercase tracking-wider">Brand Tagline</p>
-          <p className="text-white font-semibold italic">"{tagline}"</p>
+        <div className="result">
+          <p className="result-label">Brand tagline</p>
+          <p style={{ margin: 0, fontFamily: 'Newsreader, Georgia, serif', fontSize: 18, fontStyle: 'italic' }}>
+            “{tagline}”
+          </p>
         </div>
       )}
 
       {posts.length > 0 && (
         <div className="flex flex-col gap-3">
           {posts.map((post, i) => (
-            <div key={i} className="rounded-xl p-4 border border-gray-700" style={{ background: '#080B14' }}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-indigo-400 uppercase">{post.platform}</span>
-                <span className="text-xs text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-                  Published
-                </span>
+            <div key={i} className="result">
+              <div className="result-title">
+                <span className="result-label" style={{ margin: 0 }}>{post.platform}</span>
+                <span className="preview-badge">Published</span>
               </div>
-              <p className="text-gray-200 text-sm mb-2">{post.caption}</p>
-              <p className="text-gray-500 text-xs">{post.hashtags}</p>
+              <p style={{ margin: '0 0 8px', fontSize: 14, lineHeight: 1.55 }}>{post.caption}</p>
+              <p style={{ margin: 0, fontSize: 12, color: 'var(--muted)' }}>{post.hashtags}</p>
             </div>
           ))}
         </div>
       )}
 
-      {error && (
-        <div className="rounded-xl p-4 border border-red-800 bg-red-950/30">
-          <p className="text-red-400 text-sm">{error}</p>
-        </div>
-      )}
+      {error && <div className="error-box">{error}</div>}
     </div>
   )
 }
