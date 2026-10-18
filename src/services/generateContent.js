@@ -1,6 +1,56 @@
+import { DEFAULT_MODEL, getModelCandidates, getPreferredModel, isModelNotFoundError } from './modelConfig.js'
+
 const API_KEY = import.meta.env.VITE_AI_API_KEY
-const BASE_URL = import.meta.env.VITE_AI_BASE_URL
-const MODEL = import.meta.env.VITE_AI_MODEL
+const BASE_URL = import.meta.env.VITE_AI_BASE_URL || 'https://api.groq.com/openai/v1'
+const MODEL = getPreferredModel(import.meta.env.VITE_AI_MODEL)
+
+async function callChatCompletion(messages, systemPrompt, onLog) {
+  const candidateModels = getModelCandidates(MODEL)
+
+  for (const modelName of candidateModels) {
+    try {
+      const response = await fetch(`${BASE_URL}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            ...messages,
+          ],
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        const error = new Error(data?.error?.message || 'Failed to generate content')
+        error.code = data?.error?.code
+
+        if (isModelNotFoundError(error) && modelName !== DEFAULT_MODEL) {
+          onLog?.(`→ model fallback: ${modelName} unavailable, retrying with ${DEFAULT_MODEL}`, 'warning')
+          continue
+        }
+
+        throw error
+      }
+
+      return data
+    } catch (error) {
+      if (isModelNotFoundError(error) && modelName !== DEFAULT_MODEL) {
+        onLog?.(`→ model fallback: ${modelName} unavailable, retrying with ${DEFAULT_MODEL}`, 'warning')
+        continue
+      }
+
+      throw error
+    }
+  }
+
+  throw new Error(`Failed to generate content with ${MODEL}`)
+}
 
 // Simulate x402 payment per API call
 export async function simulateX402Payment(amount, purpose, onLog) {
@@ -16,32 +66,18 @@ export async function generateBrandContent(businessDescription, trends, onLog) {
   // x402 payment before API call
   await simulateX402Payment('0.002', 'social post generation', onLog)
 
-  const textResponse = await fetch(`${BASE_URL}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        {
-          role: 'system',
-          content: `You are a professional social media manager.
-          Generate 3 social media posts for the business described.
-          Use the provided trending topics to make posts relevant and timely.
-          Respond ONLY with a JSON array, no markdown, no explanation.
-          Format: [{"caption": "...", "hashtags": "...", "platform": "Instagram"}, ...]`,
-        },
-        {
-          role: 'user',
-          content: `Business: ${businessDescription}\n\nTrending topics right now: ${trends}`,
-        },
-      ],
-    }),
-  })
-
-  const textData = await textResponse.json()
+  const textData = await callChatCompletion(
+    [{
+      role: 'user',
+      content: `Business: ${businessDescription}\n\nTrending topics right now: ${trends}`,
+    }],
+    `You are a professional social media manager.
+    Generate 3 social media posts for the business described.
+    Use the provided trending topics to make posts relevant and timely.
+    Respond ONLY with a JSON array, no markdown, no explanation.
+    Format: [{"caption": "...", "hashtags": "...", "platform": "Instagram"}, ...]`,
+    onLog,
+  )
 
   if (!textData.choices?.[0]?.message?.content) {
     throw new Error('Failed to generate captions')
@@ -63,27 +99,14 @@ export async function generateTagline(businessDescription, onLog) {
   // x402 payment before API call
   await simulateX402Payment('0.001', 'tagline generation', onLog)
 
-  const response = await fetch(`${BASE_URL}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a branding expert. Generate a short, punchy tagline for the business. Respond with just the tagline, nothing else.',
-        },
-        {
-          role: 'user',
-          content: `Business: ${businessDescription}`,
-        },
-      ],
-    }),
-  })
+  const data = await callChatCompletion(
+    [{
+      role: 'user',
+      content: `Business: ${businessDescription}`,
+    }],
+    'You are a branding expert. Generate a short, punchy tagline for the business. Respond with just the tagline, nothing else.',
+    onLog,
+  )
 
-  const data = await response.json()
   return data.choices?.[0]?.message?.content || 'Your brand, your story.'
 }

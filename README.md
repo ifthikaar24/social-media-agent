@@ -98,7 +98,7 @@ This is **least-privilege A2A coordination** — Agent B can only do exactly wha
 | Permissions | ERC-7715 + ERC-7710 |
 | Transaction Relay | 1Shot Permissionless Relayer (Base) — integrated for capabilities + fee quotes via JSON-RPC |
 | Payments | x402 Protocol |
-| AI Generation | Groq (llama-3.3-70b-versatile) |
+| AI Generation | Groq (default: openai/gpt-oss-120b, with fallback to supported Groq models) |
 | Trend Research | Tavily Search API |
 | Blockchain | Sepolia Testnet |
 
@@ -154,7 +154,7 @@ Create a `.env` file:
 ```
 VITE_AI_API_KEY=your_groq_api_key
 VITE_AI_BASE_URL=https://api.groq.com/openai/v1
-VITE_AI_MODEL=llama-3.3-70b-versatile
+VITE_AI_MODEL=openai/gpt-oss-120b
 VITE_TAVILY_API_KEY=your_tavily_api_key
 ```
 
