@@ -1,5 +1,7 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
+
+import { getMetaMaskFlaskError } from '../utils/metamask'
 
 export default function ConnectWallet({ onConnected }) {
   const { address, isConnected } = useAccount()
@@ -7,13 +9,32 @@ export default function ConnectWallet({ onConnected }) {
   const { disconnect } = useDisconnect()
   const connector = connectors[0]
   const hasLogged = useRef(false)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     if (isConnected && onConnected && !hasLogged.current) {
       hasLogged.current = true
+      setError('')
       onConnected()
     }
   }, [isConnected])
+
+  async function handleConnect() {
+    const provider = typeof window !== 'undefined' ? window.ethereum : null
+    const installError = getMetaMaskFlaskError(provider)
+
+    if (installError) {
+      setError(installError)
+      return
+    }
+
+    try {
+      setError('')
+      await connect({ connector })
+    } catch (err) {
+      setError(err?.message || 'Unable to connect to MetaMask Flask.')
+    }
+  }
 
   if (isConnected) {
     return (
@@ -30,13 +51,17 @@ export default function ConnectWallet({ onConnected }) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => connect({ connector })}
-      disabled={isPending}
-      className="btn btn-primary btn-block"
-    >
-      {isPending ? 'Connecting…' : 'Connect MetaMask Flask'}
-    </button>
+    <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        onClick={handleConnect}
+        disabled={isPending}
+        className="btn btn-primary btn-block"
+      >
+        {isPending ? 'Connecting…' : 'Connect MetaMask Flask'}
+      </button>
+
+      {error && <div className="error-box">{error}</div>}
+    </div>
   )
 }
