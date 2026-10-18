@@ -1,24 +1,22 @@
-const TAVILY_API_KEY = import.meta.env.VITE_TAVILY_API_KEY
-
 export async function getTrendingTopics(businessDescription) {
-  const response = await fetch('https://api.tavily.com/search', {
+  const response = await fetch('/api/trends', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      api_key: TAVILY_API_KEY,
-      query: `trending topics and hashtags for ${businessDescription} social media ${new Date().getFullYear()}`,
-      search_depth: 'basic',
-      max_results: 5,
-      include_answer: true,
+      businessDescription,
     }),
   })
 
   const data = await response.json()
+
+  if (!response.ok) {
+    throw new Error(data?.error || 'Failed to fetch trending topics')
+  }
+
   console.log('🔍 Tavily Real Trends Response:', JSON.stringify(data, null, 2))
 
-  // Combine answer + top 3 result snippets for richer context
   const answer = data.answer || ''
   const snippets = data.results
     ?.slice(0, 3)

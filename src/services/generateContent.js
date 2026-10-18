@@ -1,7 +1,5 @@
 import { DEFAULT_MODEL, getModelCandidates, getPreferredModel, isModelNotFoundError } from './modelConfig.js'
 
-const API_KEY = import.meta.env.VITE_AI_API_KEY
-const BASE_URL = import.meta.env.VITE_AI_BASE_URL || 'https://api.groq.com/openai/v1'
 const MODEL = getPreferredModel(import.meta.env.VITE_AI_MODEL)
 
 async function callChatCompletion(messages, systemPrompt, onLog) {
@@ -9,18 +7,15 @@ async function callChatCompletion(messages, systemPrompt, onLog) {
 
   for (const modelName of candidateModels) {
     try {
-      const response = await fetch(`${BASE_URL}/chat/completions`, {
+      const response = await fetch('/api/generate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${API_KEY}`,
         },
         body: JSON.stringify({
           model: modelName,
-          messages: [
-            { role: 'system', content: systemPrompt },
-            ...messages,
-          ],
+          messages,
+          systemPrompt,
         }),
       })
 
